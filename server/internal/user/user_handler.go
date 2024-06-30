@@ -1,6 +1,7 @@
 package user
 
 import (
+	"database/sql"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -30,4 +31,39 @@ func (h *Handler) CreateUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, res)
+}
+
+func (h *Handler) Login(c *gin.Context) {
+	var user LoginUserReq
+
+	if err := c.ShouldBindJSON(&user); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	u, err := h.Service.Login(c.Request.Context(), &user)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid email or password"})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		}
+		return
+	}
+
+	// fmt.Println(u)
+
+	c.SetCookie("jwt", u.accessToken, 3600, "/", "localhost", false, true)
+
+	res := &LoginUserRes{
+		Username: u.Username,
+		ID:       u.ID,
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+
+func (h *Handler) Logout(c *gin.Context) {
+	c.SetCookie("jwt", "", -1, "", "", false, true)
+	c.JSON(http.StatusOK, gin.H{"message": "logout successful"})
 }
