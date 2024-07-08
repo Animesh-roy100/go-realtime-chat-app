@@ -24,26 +24,26 @@ const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
 
   const router = useRouter();
 
-  useEffect(() => {
-    const userInfo = localStorage.getItem("user_info");
+  // useEffect(() => {
+  //   const userInfo = localStorage.getItem("user_info");
 
-    if (!userInfo) {
-      if (window.location.pathname != "/signup") {
-        router.push("/login");
-        return;
-      }
-    } else {
-      const user: UserInfo = JSON.parse(userInfo);
-      if (user) {
-        setUser({
-          username: user.username,
-          id: user.id,
-        });
-      }
+  //   if (!userInfo) {
+  //     if (window.location.pathname != "/signup") {
+  //       router.push("/login");
+  //       return;
+  //     }
+  //   } else {
+  //     const user: UserInfo = JSON.parse(userInfo);
+  //     if (user) {
+  //       setUser({
+  //         username: user.username,
+  //         id: user.id,
+  //       });
+  //     }
 
-      setAuthenticated(true);
-    }
-  }, [authenticated]);
+  //     setAuthenticated(true);
+  //   }
+  // }, [authenticated]);
 
   return (
     <AuthContext.Provider
