@@ -79,7 +79,10 @@ const index = () => {
                   <div className="text-blue font-bold text-lg">{room.name}</div>
                 </div>
                 <div className="">
-                  <button className="px-4 text-white bg-blue rounded-md">
+                  <button
+                    className="px-4 text-white bg-blue rounded-md"
+                    // onClick={() => joinRoom(room.id)}
+                  >
                     join
                   </button>
                 </div>
