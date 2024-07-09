@@ -1,10 +1,12 @@
-import { useState, useEffect } from "react";
-import { API_URL } from "../constants";
+import { useState, useEffect, useContext } from "react";
+import { API_URL, WEBSOCKET_URL } from "../constants";
 import { v4 as uuidv4 } from "uuid";
+import { AuthContext } from "../modules/auth_provider";
 
 const index = () => {
   const [rooms, setRooms] = useState<{ id: string; name: string }[]>([]);
   const [roomName, setRoomName] = useState("");
+  const { user } = useContext(AuthContext);
 
   const getRooms = async () => {
     try {
@@ -35,7 +37,7 @@ const index = () => {
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({
-          if: uuidv4(),
+          id: uuidv4(),
           name: roomName,
         }),
       });
@@ -45,6 +47,15 @@ const index = () => {
       }
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  const joinRoom = (roomId: string) => {
+    const ws = new WebSocket(
+      `${WEBSOCKET_URL}/ws/joinRoom/${roomId}?userId=${user.id}&username=${user.username}`
+    );
+    if (ws.OPEN) {
+      setConn(ws);
     }
   };
 
@@ -81,7 +92,7 @@ const index = () => {
                 <div className="">
                   <button
                     className="px-4 text-white bg-blue rounded-md"
-                    // onClick={() => joinRoom(room.id)}
+                    onClick={() => joinRoom(room.id)}
                   >
                     join
                   </button>
