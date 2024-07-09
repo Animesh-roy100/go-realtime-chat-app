@@ -2,11 +2,16 @@ import { useState, useEffect, useContext } from "react";
 import { API_URL, WEBSOCKET_URL } from "../constants";
 import { v4 as uuidv4 } from "uuid";
 import { AuthContext } from "../modules/auth_provider";
+import { WebsocketContext } from "../modules/websocket_provider";
+import { useRouter } from "next/router";
 
 const index = () => {
   const [rooms, setRooms] = useState<{ id: string; name: string }[]>([]);
   const [roomName, setRoomName] = useState("");
   const { user } = useContext(AuthContext);
+  const { setConn } = useContext(WebsocketContext);
+
+  const router = useRouter();
 
   const getRooms = async () => {
     try {
@@ -56,6 +61,8 @@ const index = () => {
     );
     if (ws.OPEN) {
       setConn(ws);
+      router.push("/app");
+      return;
     }
   };
 
