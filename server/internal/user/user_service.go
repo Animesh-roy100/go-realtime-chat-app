@@ -96,3 +96,15 @@ func (s *service) Login(c context.Context, req *LoginUserReq) (*LoginUserRes, er
 
 	return &LoginUserRes{accessToken: ss, Username: u.Username, ID: strconv.Itoa(int(u.ID))}, nil
 }
+
+func (s *service) ListUsers(c context.Context) ([]*User, error) {
+	ctx, cancel := context.WithTimeout(c, s.timeout)
+	defer cancel()
+
+	users, err := s.Repository.ListUsers(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return users, nil
+}
